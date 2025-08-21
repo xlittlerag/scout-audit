@@ -1,6 +1,7 @@
 # Stage 1: Builder
 # Using the latest Rust image to set up the build environment
-FROM rust:1.84 AS builder
+FROM rustlang/rust:nightly AS builder
+
 SHELL ["/bin/bash", "-c"]
 
 # Copy and set permissions for the entrypoint script
@@ -13,31 +14,40 @@ COPY / /usr/src/scout-audit
 WORKDIR /usr/src/scout-audit/apps/cargo-scout-audit
 RUN cargo install --features docker_container --path . --locked
 
-WORKDIR /usr/src/scout-audit/nightly/2024-07-11/detectors/ink
-RUN cargo +nightly-2024-07-11 build --release
-WORKDIR /usr/src/scout-audit/nightly/2024-07-11/detectors/rust
-RUN cargo +nightly-2024-07-11 build --release
-WORKDIR /usr/src/scout-audit/nightly/2024-07-11/detectors/soroban
-RUN cargo +nightly-2024-07-11 build --release
-WORKDIR /usr/src/scout-audit/nightly/2024-07-11/detectors/substrate-pallets
-RUN cargo +nightly-2024-07-11 build --release
+WORKDIR /usr/src/scout-audit/nightly/2025-08-07/detectors/ink
+RUN cargo +nightly-2025-08-07 build --release
+WORKDIR /usr/src/scout-audit/nightly/2025-08-07/detectors/rust
+RUN cargo +nightly-2025-08-07 build --release
+WORKDIR /usr/src/scout-audit/nightly/2025-08-07/detectors/soroban
+RUN cargo +nightly-2025-08-07 build --release
+WORKDIR /usr/src/scout-audit/nightly/2025-08-07/detectors/substrate-pallets
+RUN cargo +nightly-2025-08-07 build --release
 
-WORKDIR /usr/src/scout-audit/nightly/2023-12-16/detectors/ink
-RUN cargo +nightly-2023-12-16 build --release
-WORKDIR /usr/src/scout-audit/nightly/2023-12-16/detectors/rust
-RUN cargo +nightly-2023-12-16 build --release
-WORKDIR /usr/src/scout-audit/nightly/2023-12-16/detectors/soroban
-RUN cargo +nightly-2023-12-16 build --release
-WORKDIR /usr/src/scout-audit/nightly/2023-12-16/detectors/substrate-pallets
-RUN cargo +nightly-2023-12-16 build --release
+# WORKDIR /usr/src/scout-audit/nightly/2024-07-11/detectors/ink
+# RUN cargo +nightly-2024-07-11 build --release
+# WORKDIR /usr/src/scout-audit/nightly/2024-07-11/detectors/rust
+# RUN cargo +nightly-2024-07-11 build --release
+# WORKDIR /usr/src/scout-audit/nightly/2024-07-11/detectors/soroban
+# RUN cargo +nightly-2024-07-11 build --release
+# WORKDIR /usr/src/scout-audit/nightly/2024-07-11/detectors/substrate-pallets
+# RUN cargo +nightly-2024-07-11 build --release
+#
+# WORKDIR /usr/src/scout-audit/nightly/2023-12-16/detectors/ink
+# RUN cargo +nightly-2023-12-16 build --release
+# WORKDIR /usr/src/scout-audit/nightly/2023-12-16/detectors/rust
+# RUN cargo +nightly-2023-12-16 build --release
+# WORKDIR /usr/src/scout-audit/nightly/2023-12-16/detectors/soroban
+# RUN cargo +nightly-2023-12-16 build --release
+# WORKDIR /usr/src/scout-audit/nightly/2023-12-16/detectors/substrate-pallets
+# RUN cargo +nightly-2023-12-16 build --release
 
 # Stage 2: Final
 # Base image with Rust slim version for the runtime environment
-FROM rust:1.84 AS final
+FROM rustlang/rust:nightly AS final
 
 # Install only necessary runtime dependencies
 RUN apt-get update && apt-get install -y libcurl4 libssl-dev pkg-config && \
-    rm -rf /var/lib/apt/lists/*
+	rm -rf /var/lib/apt/lists/*
 
 # Copy the .rustup directory from the builder stage
 COPY --from=builder /usr/local/rustup /usr/local/rustup

@@ -121,7 +121,7 @@ impl<'tcx> LateLintPass<'tcx> for ZeroOrTestAddress {
         impl<'tcx> Visitor<'tcx> for ZeroCheckStorage<'tcx, '_> {
             fn visit_expr(&mut self, expr: &'tcx Expr<'_>) {
                 //Look if those params are compared with zero address
-                if let ExprKind::If(mut cond, _, _) = &expr.kind {
+                if let &ExprKind::If(mut cond, _, _) = &expr.kind {
                     if let ExprKind::DropTemps(drop) = cond.kind {
                         cond = drop;
                     }
